@@ -12,9 +12,14 @@ defmodule Huex do
   """
 
   @typedoc """
-  Light identifier can be either a numberic or a binary (e.g. "1")
+  Light identifier can be either a numeric or a binary (e.g. "1")
   """
   @type light :: non_neg_integer | binary
+
+  @typedoc """
+  Sensor identifier can be either a numeric or a binary (e.g. "1")
+  """
+  @type sensor :: non_neg_integer | binary
 
   @typedoc """
   Group identifier can be either a numberic or a binary (e.g. "1"). Special group 0 always contains all the lights.
@@ -104,6 +109,15 @@ defmodule Huex do
   @spec lights(Bridge.t) :: Map.t
   def lights(bridge) do
     bridge |> lights_url |> get_json
+  end
+
+  @doc """
+  Lists the sensors connected to the given `bridge`.
+  Requires the connection to be authorized.
+  """
+  @spec sensors(Bridge.t) :: Map.t
+  def sensors(bridge) do
+    bridge |> sensors_url |> get_json
   end
 
   @doc """
@@ -361,6 +375,8 @@ defmodule Huex do
   defp light_state_url(bridge, light), do: light_url(bridge, light) <> "/state"
   defp light_url(bridge, light), do: lights_url(bridge) <> "/#{light}"
   defp lights_url(bridge), do: user_api_url(bridge, "lights")
+
+  defp sensors_url(bridge), do: user_api_url(bridge, "sensors")
 
   defp user_api_url(bridge, relative_path), do: user_api_url(bridge) <> "/#{relative_path}"
   defp user_api_url(bridge), do: api_url(bridge, Map.fetch!(bridge, :username))
